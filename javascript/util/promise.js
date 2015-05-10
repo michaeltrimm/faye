@@ -40,7 +40,7 @@ var registerOnFulfilled = function(promise, onFulfilled, next) {
   if (typeof onFulfilled !== 'function') onFulfilled = RETURN;
   var handler = function(value) { invoke(onFulfilled, value, next) };
 
-  if (promise._state === PENDING) {
+  if (promise && promise._state === PENDING) {
     promise._onFulfilled.push(handler);
   } else if (promise._state === FULFILLED) {
     handler(promise._value);
@@ -51,9 +51,9 @@ var registerOnRejected = function(promise, onRejected, next) {
   if (typeof onRejected !== 'function') onRejected = THROW;
   var handler = function(reason) { invoke(onRejected, reason, next) };
 
-  if (promise._state === PENDING) {
+  if (promise && promise._state === PENDING) {
     promise._onRejected.push(handler);
-  } else if (promise._state === REJECTED) {
+  } else if (promise && promise._state === REJECTED) {
     handler(promise._reason);
   }
 };
@@ -101,7 +101,7 @@ var fulfill = Promise.fulfill = Promise.resolve = function(promise, value) {
 };
 
 var _fulfill = function(promise, value) {
-  if (promise._state !== PENDING) return;
+  if (promise && promise._state !== PENDING) return;
 
   promise._state      = FULFILLED;
   promise._value      = value;
@@ -112,7 +112,7 @@ var _fulfill = function(promise, value) {
 };
 
 var reject = Promise.reject = function(promise, reason) {
-  if (promise._state !== PENDING) return;
+  if (promise && promise._state !== PENDING) return;
 
   promise._state       = REJECTED;
   promise._reason      = reason;
